@@ -3,7 +3,7 @@
 
   <groupId>org.linkeddatafragments</groupId>
   <artifactId>ldf-client</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <packaging>jar</packaging>
 
   <name>Linked Data Fragments client</name>
@@ -112,6 +112,7 @@
                 <connection>scm:git:git@github.com:freme-project/ldf-client.git</connection>
                 <url>scm:git:git@github.com/freme-project:ldf-client.git</url>
                 <developerConnection>scm:git:git@github.com:freme-project/ldf-client.git</developerConnection>
-        </scm>
+          <tag>ldf-client-0.1</tag>
+  </scm>
 
 </project>
