@@ -110,9 +110,8 @@
 
         <scm>
                 <connection>scm:git:git@github.com:freme-project/ldf-client.git</connection>
-                <url>scm:git:git@github.com/freme-project:ldf-client.git</url>
+                <url>scm:git:git@github.com:freme-project/ldf-client.gitt</url>
                 <developerConnection>scm:git:git@github.com:freme-project/ldf-client.git</developerConnection>
-          <tag>HEAD</tag>
   </scm>
 
 </project>
