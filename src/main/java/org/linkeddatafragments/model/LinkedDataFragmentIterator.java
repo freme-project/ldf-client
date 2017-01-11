@@ -1,8 +1,9 @@
 package org.linkeddatafragments.model;
 
+import com.hp.hpl.jena.graph.TripleMatch;
+
 import java.util.Iterator;
 
-import org.apache.jena.graph.Triple;
 import org.linkeddatafragments.client.LinkedDataFragmentsClient;
 
 /**
@@ -10,7 +11,7 @@ import org.linkeddatafragments.client.LinkedDataFragmentsClient;
  */
 public class LinkedDataFragmentIterator implements Iterator<LinkedDataFragment> {
     protected final LinkedDataFragment baseFragment;
-    protected final Triple tripleTemplate;
+    protected final TripleMatch tripleTemplate;
     protected final LinkedDataFragmentsClient ldfClient;
 
     protected LinkedDataFragment currentFragment;
@@ -26,12 +27,12 @@ public class LinkedDataFragmentIterator implements Iterator<LinkedDataFragment> 
         return new LinkedDataFragmentIterator(ldf, c);
     }
 
-    @Override
+    
     public boolean hasNext() {
         return currentFragment.hasNextUrl();
     }
 
-    @Override
+    
     public LinkedDataFragment next() {
         try {
             currentFragment = ldfClient.getFragment("GET", currentFragment.getNextUrl(), this.tripleTemplate);
@@ -41,7 +42,7 @@ public class LinkedDataFragmentIterator implements Iterator<LinkedDataFragment> 
         return currentFragment;
     }
 
-    @Override
+    
     public void remove() {
         throw new UnsupportedOperationException();
     }

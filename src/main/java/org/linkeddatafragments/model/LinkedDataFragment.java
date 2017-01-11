@@ -6,16 +6,15 @@ import com.github.fge.uritemplate.URITemplateException;
 import com.github.fge.uritemplate.vars.VariableMap;
 import com.github.fge.uritemplate.vars.VariableMapBuilder;
 import com.google.common.base.Strings;
+import com.hp.hpl.jena.graph.*;
+import com.hp.hpl.jena.rdf.model.*;
+import com.hp.hpl.jena.sparql.graph.GraphFactory;
+import com.hp.hpl.jena.util.iterator.ExtendedIterator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jena.graph.*;
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.sparql.graph.GraphFactory;
-import org.apache.jena.util.iterator.ExtendedIterator;
 
 import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.util.Iterator;
-import java.util.function.Predicate;
 
 public class LinkedDataFragment {
     public static final Resource RDF_PREDICATE = ResourceFactory.createResource("http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate");
@@ -31,23 +30,23 @@ public class LinkedDataFragment {
     protected String objectVariable;
     protected String template;
     protected URITemplate uriTemplate;
-    protected final Triple tripleMatch;
+    protected final TripleMatch tripleMatch;
 
-    public LinkedDataFragment(Triple m) {
+    public LinkedDataFragment(TripleMatch m) {
         this.tripleMatch = m;
         Graph g = GraphFactory.createJenaDefaultGraph();
-        g.add(m);
+        g.add(m.asTriple());
         this.tripleModel = ModelFactory.createModelForGraph(g);
         this.matchCount = 1L;
         this.triples = GraphUtil.findAll(g);
         //hydraParse(g);
     }
 
-    public LinkedDataFragment(Triple m, Long matchCount) {
+    public LinkedDataFragment(TripleMatch m, Long matchCount) {
         this.tripleMatch = m;
         Graph g = GraphFactory.createJenaDefaultGraph();
         if(matchCount > 0) {
-            g.add(m);
+            g.add(m.asTriple());
         }
         this.tripleModel = ModelFactory.createModelForGraph(g);
         this.matchCount = matchCount;
@@ -55,7 +54,7 @@ public class LinkedDataFragment {
         //hydraParse(g);
     }
 
-    public LinkedDataFragment(ExtendedIterator<Triple> triples, Triple m) {
+    public LinkedDataFragment(ExtendedIterator<Triple> triples, TripleMatch m) {
         this.tripleMatch = m;
         Long matchCount = 0L;
         ExtendedIterator<Triple> iteratorTriples = triples;
@@ -69,7 +68,7 @@ public class LinkedDataFragment {
         hydraParse(g);
     }
 
-    public LinkedDataFragment(Iterator<Triple> triples, Long matchCount, Triple m) {
+    public LinkedDataFragment(Iterator<Triple> triples, Long matchCount, TripleMatch m) {
         this.tripleMatch = m;
         Graph g = GraphFactory.createJenaDefaultGraph();
         GraphUtil.add(g, triples);
@@ -86,15 +85,13 @@ public class LinkedDataFragment {
         setTemplate();
         setMatchCount();
         this.triples = GraphUtil.findAll(g)
-                .filterKeep(triple -> tripleMatch.matches(triple))
-                .filterDrop(triple -> new Triple(NodeFactory.createURI(url), Node.ANY, Node.ANY).matches(triple))
-                .filterDrop(triple -> new Triple(pattern.asNode(), Node.ANY, Node.ANY).matches(triple))
-                .filterDrop(triple -> LinkedDataFragmentsConstants.HYDRA_VARIABLE.matches(triple))
-                .filterDrop(triple -> LinkedDataFragmentsConstants.HYDRA_PROPERTY.matches(triple));
-
+                .filterKeep(new TripleMatchFilter(this.tripleMatch.asTriple()))
+                .filterDrop(new TripleMatchFilter(new Triple(NodeFactory.createURI(url), Node.ANY, Node.ANY)))
+                .filterDrop(new TripleMatchFilter(new Triple(pattern.asNode(), Node.ANY, Node.ANY)))
+                .filterDrop(LinkedDataFragmentsConstants.HYDRA_VARIABLE)
+                .filterDrop(LinkedDataFragmentsConstants.HYDRA_PROPERTY);
         if(fragmentNode != null) {
-            this.triples = this.triples.filterDrop(
-                    triple -> new Triple(fragmentNode.asNode(), Node.ANY, Node.ANY).matches(triple));
+            this.triples = this.triples.filterDrop(new TripleMatchFilter(new Triple(fragmentNode.asNode(), Node.ANY, Node.ANY)));
         }
     }
 
@@ -110,7 +107,7 @@ public class LinkedDataFragment {
         return url;
     }
 
-    public Triple getTripleMatch() {
+    public TripleMatch getTripleMatch() {
         return this.tripleMatch;
     }
 
@@ -175,7 +172,7 @@ public class LinkedDataFragment {
         return triplesNumber;
     }
 
-    public String getUrlToFragment(Triple m) {
+    public String getUrlToFragment(TripleMatch m) {
         NodeIterator it = getNodePatternIterator();
         while(it.hasNext()) {
             RDFNode mapping = it.next();

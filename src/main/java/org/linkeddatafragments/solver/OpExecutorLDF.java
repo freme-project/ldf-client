@@ -1,30 +1,31 @@
 package org.linkeddatafragments.solver;
 
-import org.apache.jena.sparql.ARQInternalErrorException;
-import org.apache.jena.sparql.algebra.Op;
-import org.apache.jena.sparql.algebra.op.OpBGP;
-import org.apache.jena.sparql.algebra.op.OpDistinct;
-import org.apache.jena.sparql.algebra.op.OpFilter;
-import org.apache.jena.sparql.algebra.op.OpReduced;
-import org.apache.jena.sparql.algebra.optimize.TransformFilterPlacement;
-import org.apache.jena.sparql.core.BasicPattern;
-import org.apache.jena.sparql.core.Substitute;
-import org.apache.jena.sparql.engine.ExecutionContext;
-import org.apache.jena.sparql.engine.QueryIterator;
-import org.apache.jena.sparql.engine.iterator.QueryIterPeek;
-import org.apache.jena.sparql.engine.main.OpExecutor;
-import org.apache.jena.sparql.engine.main.OpExecutorFactory;
-import org.apache.jena.sparql.engine.main.QC;
-import org.apache.jena.sparql.engine.optimizer.reorder.ReorderProc;
-import org.apache.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
-import org.apache.jena.sparql.expr.ExprList;
 import org.linkeddatafragments.model.LinkedDataFragmentGraph;
+
+import com.hp.hpl.jena.sparql.ARQInternalErrorException;
+import com.hp.hpl.jena.sparql.algebra.Op;
+import com.hp.hpl.jena.sparql.algebra.op.OpBGP;
+import com.hp.hpl.jena.sparql.algebra.op.OpDistinct;
+import com.hp.hpl.jena.sparql.algebra.op.OpFilter;
+import com.hp.hpl.jena.sparql.algebra.op.OpReduced;
+import com.hp.hpl.jena.sparql.algebra.optimize.TransformFilterPlacement;
+import com.hp.hpl.jena.sparql.core.BasicPattern;
+import com.hp.hpl.jena.sparql.core.Substitute;
+import com.hp.hpl.jena.sparql.engine.ExecutionContext;
+import com.hp.hpl.jena.sparql.engine.QueryIterator;
+import com.hp.hpl.jena.sparql.engine.iterator.QueryIterPeek;
+import com.hp.hpl.jena.sparql.engine.main.OpExecutor;
+import com.hp.hpl.jena.sparql.engine.main.OpExecutorFactory;
+import com.hp.hpl.jena.sparql.engine.main.QC;
+import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderProc;
+import com.hp.hpl.jena.sparql.engine.optimizer.reorder.ReorderTransformation;
+import com.hp.hpl.jena.sparql.expr.ExprList;
 
 public class OpExecutorLDF extends OpExecutor {
 
     public final static OpExecutorFactory opExecFactoryLDF = new OpExecutorFactory()
     {
-        @Override
+        
         public OpExecutor create(ExecutionContext execCxt)
         {
             return new OpExecutorLDF(execCxt) ;
@@ -39,21 +40,21 @@ public class OpExecutorLDF extends OpExecutor {
         isForLDF = (execCtx.getActiveGraph() instanceof LinkedDataFragmentGraph) ;
     }
 
-    @Override
+    
     protected QueryIterator execute(OpDistinct opDistinct, QueryIterator input)
     {
         // FIXME: Add to context duplicates property.
         return super.execute(opDistinct, input) ;
     }
 
-    @Override
+    
     protected QueryIterator execute(OpReduced opReduced, QueryIterator input)
     {
         // FIXME: Add to context duplicates property.
         return super.execute(opReduced, input) ;
     }
 
-    @Override
+    
     protected QueryIterator execute(OpFilter opFilter, QueryIterator input)
     {
         if ( !isForLDF)
@@ -77,7 +78,7 @@ public class OpExecutorLDF extends OpExecutor {
 
     // ---- Triple patterns
 
-    @Override
+    
     protected QueryIterator execute(OpBGP opBGP, QueryIterator input)
     {
         if ( !isForLDF)
@@ -169,7 +170,7 @@ public class OpExecutorLDF extends OpExecutor {
     private static OpExecutorFactory plainFactory = new OpExecutorPlainFactoryLDF() ;
     private static class OpExecutorPlainFactoryLDF implements OpExecutorFactory
     {
-        @Override
+        
         public OpExecutor create(ExecutionContext execCxt)
         {
             return new OpExecutorPlainLDF(execCxt) ;
@@ -186,7 +187,7 @@ public class OpExecutorLDF extends OpExecutor {
             super(execCxt) ;
         }
 
-        @Override
+        
         public QueryIterator execute(OpBGP opBGP, QueryIterator input)
         {
             return super.execute(opBGP, input) ;

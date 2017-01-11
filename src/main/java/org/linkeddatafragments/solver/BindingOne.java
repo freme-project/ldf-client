@@ -1,12 +1,12 @@
 package org.linkeddatafragments.solver;
 
-import org.apache.jena.atlas.iterator.Iter;
-import org.apache.jena.graph.Node;
-import org.apache.jena.sparql.core.Var;
-import org.apache.jena.sparql.engine.binding.Binding;
-
 import java.util.Iterator;
 
+import org.apache.jena.atlas.iterator.Iter;
+
+import com.hp.hpl.jena.graph.Node;
+import com.hp.hpl.jena.sparql.core.Var;
+import com.hp.hpl.jena.sparql.engine.binding.Binding;
 
 /**
  * Copied from Jena distribution because the constructor was protected
@@ -25,27 +25,27 @@ public class BindingOne implements Binding
         this.value = node;
     }
 
-    @Override
+    
     public int size() { return 1 ; }
 
-    @Override
+    
     public boolean isEmpty() { return false ; }
 
     /** Iterate over all the names of variables.
      */
-    @Override
+    
     public Iterator<Var> vars()
     {
         return Iter.singleton(var) ;
     }
 
-    @Override
+    
     public boolean contains(Var n)
     {
         return var.equals(n) ;
     }
 
-    @Override
+    
     public Node get(Var v)
     {
         if ( v.equals(var) )
