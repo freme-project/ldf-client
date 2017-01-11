@@ -107,7 +107,9 @@
         </plugins>
   </build>
 
-  <scm>
-    <tag>ldf-client-0.1</tag>
-  </scm>
+	<scm>
+		<connection>scm:git:git@github.com:freme-project/ldf-client.git</connection>
+		<url>scm:git:git@github.com/freme-project:ldf-client.git</url>
+		<developerConnection>scm:git:git@github.com:freme-project/ldf-client.git</developerConnection>
+	</scm>
 </project>
